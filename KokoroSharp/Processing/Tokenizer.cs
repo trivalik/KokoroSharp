@@ -50,15 +50,15 @@ public static partial class Tokenizer {
 
     /// <summary> Converts the input text into the corresponding phonemes, with slight preprocessing and post-processing to preserve punctuation and other TTS essentials. </summary>
     public static string Phonemize(string inputText, string langCode = "en-us", bool preprocess = true) {
-        var strings = PhonemeLiteral().Split(inputText).Select(text => {
+        var strings = PhonemeLiteral().Split(inputText).Select<string, (string, string)>(text => {
             var m = PhonemeLiteral2().Match(text);
-            if (m.Success) { return m.Groups[1].Value; } // Extract the phoneme part from the literal pronunciation, e.g. [Kokoro](/kˈOkəɹO/) => "kˈOkəɹO"
+            if (m.Success) { return (text, m.Groups[1].Value); } // Extract the phoneme part from the literal pronunciation, e.g. [Kokoro](/kˈOkəɹO/) => "kˈOkəɹO"
             if (preprocess) { text = PreprocessText(text, langCode); } // Preprocess the text if needed.
-            if (string.IsNullOrWhiteSpace(text)) { return string.Empty; } // Skip empty strings.
-            return Phonemize_Internal(CollectSymbols(text), out _, langCode); // Collect symbols to prepare for phonemization.
-        });
-        string preprocessedText = string.Join(' ', strings);
-        var phonemeList = preprocessedText.Split('\n');
+            if (string.IsNullOrWhiteSpace(text)) { return (text, string.Empty); } // Skip empty strings.
+            return (text, Phonemize_Internal(CollectSymbols(text), out _, langCode)); // Collect symbols to prepare for phonemization.
+        }).ToList();
+        string preprocessedText = string.Join("", strings.Select(x => x.Item1));
+        var phonemeList = string.Join("", strings.Select(x => x.Item2)).Split('\n');
         return PostProcessPhonemes(preprocessedText, phonemeList, langCode);
     }
 

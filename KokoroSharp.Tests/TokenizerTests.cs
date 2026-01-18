@@ -18,6 +18,8 @@ public class TokenizerTests {
     [Test]
     [Arguments("[Misaki](/misˈɑki/) is a G2P engine designed for [Kokoro](/kˈOkəɹO/) models.", "misˈɑki ɪz ɐ dʒˈi tˈu pˈi ˈɛndʒɪn dɪzˈaɪnd fˌɔɹ kˈOkəɹO mˈɑːdəlz")]
     [Arguments("Brits say [tomato](/təmɑːtoʊ/) instead of [tomato](/təmeɪtoʊ/).", "bɹˈɪts sˈeɪ təmɑːtoʊ ɪnstˈɛd ʌv təmeɪtoʊ")]
+    [Arguments("Here, in this sentence, there are some commas.\nThis sentence is on another line! There are two sentences on this line.",
+        "hˈɪɹ, ɪn ðɪs sˈɛntəns, ðɛɹˌɑːɹ sˌʌm kˈɑːməz.\nðɪs sˈɛntəns ɪz ˌɔn ɐnˈʌðɚ lˈaɪn! ðɛɹˌɑːɹ tˈu sˈɛntənsᵻz ˌɔn ðɪs lˈaɪn.")]
     public async Task Phonemize(string input, string expected) {
         await Assert.That(Tokenizer.Phonemize(input)).IsEqualTo(expected);
     }
